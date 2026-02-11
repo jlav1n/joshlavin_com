@@ -1,0 +1,42 @@
+
+> tell a story. http://damian.conway.org/IBP.pdf
+> 
+> how to get important point across? ask a question. let audience come to conclusion themselves.
+> 3 most important points.
+> keep slides simple.
+> 
+> http://bassistance.de/about/talk-checklist/
+> http://speaking.io/
+
+    - repetition
+
+
+
+> https://github.com/interchange/TableEditor
+> http://techblog.babyl.ca/entry/dancer-jasmine
+> 
+> write a blog post beforehand?
+>   is it interesting? Are you wrong? Does anyone care?
+
+
+appname, extend a Dancer2 app:
+http://advent.perldancer.org/2014/10
+
+
+My story is that I was working on legacy software, trying to develop a new site. I wanted to make the site as friendly to a future move to Dancer as possible. In hindsight, I should have just taken the leap to Dancer. It would have been less painful than trying to re-invent a lot of functionality my old software had, but I didn't want to embed in my code.
+
+
+How can I use Dancer in a RESTful way?
+
+How can I make my existing project easier to transition to Dancer?
+
+We'll look at how an existing project was developed with a future Dancer
+transition in mind, but why that plan didn't work so well.
+
+* Pain 
+    - common pain-point?
+* Solution
+    - general, high-level solution
+* Support
+    - supporting points
+* something personal and/or humorous

@@ -1,0 +1,578 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>AngularJS &amp; Dancer for Modern Web Development</title>
+		<meta name="author" content="Josh Lavin">
+		<!-- 
+In developing applications, we sometimes have to work with legacy
+systems; sometimes quite often. This is a fact of the business world.
+Yet, how can we work efficiently with these systems, and prepare
+ourselves for a migration to Dancer?
+
+We'll consider how to shift the front-end from dependence on a legacy
+system, and make it suitable for interacting with a Dancer back-end,
+which provides RESTful JSON web services. (Insert your favorite
+JavaScript framework here; I used AngularJS.)
+
+For a legacy back-end, we'll see what I tried to do to "get ready" for
+Dancer before migrating, and the downsides I ran into. Also, why I
+feel Dancer is a better back-end than the legacy system (except when
+it isn't).
+		-->
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<style>
+			@font-face {
+				font-family: 'MyriadPro';
+				src: url('fonts/MyriadPro/MyriadPro-Regular.otf');
+	  			font-weight: normal;
+				font-style: normal;
+			}
+			@font-face {
+				font-family: 'MyriadPro-SemiBold';
+				src: url('fonts/MyriadPro/MyriadPro-SemiBold.otf');
+	  			font-weight: normal;
+				font-style: normal;
+			}
+			body {
+				background: #302E2F;
+				font-family: MyriadPro, arial, sans-serif;
+			}
+			.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+				font-family: MyriadPro, arial, sans-serif;
+	  			font-weight: normal;
+	  			text-transform: unset;
+			}
+			.reveal h1 {
+				letter-spacing: -0.03em;
+			}
+			.reveal h1, .reveal h2 {
+				color: #de8427;
+			}
+			.reveal .contrast {
+				color: #fff;
+				text-shadow: 5px 5px 5px #b16a1f;
+			}
+		</style>
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+<!--
+	<h2>Speaker View</h2>
+	It includes a timer, preview of the upcoming slide as well as your speaker notes.</p>
+	<p>Press the <em>S</em> key to try it out.</p>
+-->
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>AngularJS &amp; Dancer</h1>
+					<h3>for Modern Web Development</h3>
+				</section>
+
+				<section>
+					<h2 class="cursive">Otherwise titled:</h2>
+					<h3 style="text-transform:capitalize">How I tried to get my app ready for Dancer, instead of just using Dancer, and how that worked out for me.</h3>
+				</section>
+
+				<section>
+					<h1>Josh Lavin</h1>
+					<p><a href="https://twitter.com/jdigory">@jdigory</a></p>
+					<p>IRC: digory</p>
+					<aside class="notes">
+						Been working with Perl for 13 years.<br>
+						New to Dancer -- have a lot to learn. 
+					</aside>
+				</section>
+
+				<section data-background="stock_art/End_point_light_on_dark.svg" data-background-size="90%">
+					<aside class="notes">
+						End Point Corporation - web consultancy<br>
+						since July (formerly of Perusion - merged)<br>
+						Web Application Developer<br>
+						both front-end and back-end<br>
+						Interchange 5 - legacy Perl e-commerce product (still kicking)
+					</aside>
+				</section>
+
+				<section data-background="stock_art/orange/old_plane.jpg">
+					<aside class="notes">
+						It's a fact that a lot of us have to work with legacy software.<br>
+						Lots of older platforms out there. So unavoidable.<br>
+						Eventually, old apps are migrated.<br>
+						Or they die a slow death.<br>
+						(Or the last developer maintaining it dies.)
+					</aside>
+				</section>
+
+				<section>
+					<h1 class="cursive">Migrate</h1>
+					<h2 class="fragment">How?</h2>
+					<ul class="fragment">
+						<li>Legacy App paradigm</li>
+						<li>Modern Perl</li>
+						<li>Organize business logic</li>
+					</ul>
+					<aside class="notes">
+						It'd be great if we could migrate everything to Dancer.<br>
+						Not always practical, but at least consider ways.<br>
+						How to prepare for migration?<br>
+						Paradigm: Doesn't always have to be done a certain way. Better ways.<br>
+						Also, less dependence on Legacy-App-specifc code.<br>
+						Modern: OO, tests, CPAN modules (not reinvent)<br>
+						Logic: trying to avoid logic in the front-end<br>
+					</aside>
+				</section>
+
+				<section data-background="stock_art/legacy_codebase.png" data-background-size="70%">
+					<aside class="notes">
+						If I'm going to use modern Perl, I use should tests, right?<br>
+						Let's write some tests.<br>
+						Oh, crap.<br>
+						Explored testing, but soon realized testing requires methods. Haha.<br>
+						So, _that's_ what Object Oriented means.<br>
+						Realization my life as a Perl programmer up till now was just doing scripting.<br>
+						My code looked like a relic from 1990.<br>
+						It was just a big pile of poo; no methods; not testable.<br>
+						I couldn't even write tests for the Legacy App - unsupported.<br>
+						Business logic everywhere.
+					</aside>
+				</section>
+
+<!--	Press <strong>ESC</strong> to enter the slide overview. -->
+
+				<section style="text-align:right" data-background="stock_art/orange/moo.jpg">
+					<!-- <h1 class="contrast">Using Moo</h1> -->
+					<aside class="notes">
+						I set out to change my ways.<br>
+						Started exploring OO Perl, using Moo, since Dancer2 uses Moo.<br>
+						Started trying to write unit tests.<br>
+						Using classes, methods: breaking problems down into smaller problems.<br>
+						Writing code this way was fun! Felt like I was doing something right.
+					</aside>
+				</section>
+
+				<section data-background="stock_art/orange/crash.jpg">
+					<aside class="notes">
+						I quickly realized I wasn't able to run tests in the Legacy App.<br>
+						It couldn't be called from the command line.<br>
+						So if my modules depend on legacy app code, I can't run tests from the shell.<br>
+						(Legacy app can only be called from shell via weird hacks.)<br>
+						Now I have to abstract away all <i>Legacy App-specific code</i> from my modules (just a couple modules rely on Legacy App).<br>
+						Which was the right idea anyways, and is the idea of Separation of Concerns. App vs Web App.<br>
+						<i>Now</i> I can run tests on many modules.
+					</aside>
+				</section>
+
+				<section>
+					<h1 class="cursive">Move already</h1>
+					<aside class="notes">
+						As I started the process of yak shaving, I soon realized:
+						I should have moved earlier.<br>
+						Weird hacks to get Legacy App doing things like Dancer would.<br>
+						But it was a start. A step in the right direction.<br>
+						<em>And,</em> my back-end code was all the more ready for working w/ Dancer. Just change a few things, change the Web App side, and presto.
+					</aside>
+				</section>
+
+				<section data-background="stock_art/orange/front.jpg">
+					<aside class="notes">
+						Now for getting the front-end ready.<br>
+						I had a lot of business logic in there I needed to clean up.
+					</aside>
+				</section>
+
+				<section>
+					<pre><code data-trim contenteditable>
+@_TOP_@
+<h1>[scratch page_title]</h1>
+[perl]
+   my $has_course;
+   for (grep {$_->{mv_ib} eq 'course'} @$Items) {
+      $has_course++;
+   }
+   return $has_course ? '<p>You have a course!</p>' : '';
+[/perl]
+<button>Buy [if cgi items]more[else]now[/else][/if]</button>
+@_BOTTOM_@
+					</code></pre>
+					<aside class="notes">
+						Example of Legacy App front-end page.<br>
+						Legacy app allowed embedding all sorts of stuff into HTML page.
+						<p>Legacy App tags (brackets) + "Embedded Perl" = Tag soup.</p>
+						Won't look nice when viewed on your own machine in a web browser, absent the Legacy App.<br>
+						Let's face it, it doesn't look nice anywhere.
+					</aside>
+				</section>
+
+				<section>
+					<h1 class="cursive">Separation of Concerns</h1>
+					<p class="fragment">HTML + placeholders?</p>
+					<aside class="notes">
+						I'm going to use modern Perl, I should separate things, right?<br>
+						How can we apply this principle to the front-end?<br>
+						[next]<br>
+						Thought: to abstract away logic from the page, could we use some placeholders in the HTML to later fill in with our data?<br>
+						Idea isn't new -- late to the party, but better late than never.
+					</aside>
+				</section>
+
+				<section>
+					<pre><code data-trim contenteditable>
+@_TOP_@
+[my-tag-attr-list 
+    page_title="[scratch page_title]"
+    has_course="[perl] ... [/perl]"
+    buy_phrase="Buy [if cgi items]more[else]now[/else][/if]"
+]
+
+    <h1>{PAGE_TITLE}</h1>
+    {HAS_COURSE?}<p>You have a course!</p>{/HAS_COURSE?}
+    <button>{BUY_PHRASE}</button>
+
+[/my-tag-attr-list]
+@_BOTTOM_@
+					</code></pre>
+					<aside class="notes">
+						First attempt.
+						Used Legacy App's built-in placeholder system.<br>
+						At least the logic was separated from the HTML a bit now.<br>
+						It worked OK (?-mark is an "if").<br>
+						But the logic _was_ still baked into the HTML page.<br>
+						How could we be more ready for Dancer?<br>
+						(should have just migrated!)<br>
+						Template::Toolkit? <br>
+						But hard to use in Legacy App.
+					</aside>
+				</section>
+
+				<section data-background="stock_art/AngularJS-Shield-huge.png" data-background-size="40%">
+					<!-- 
+						https://github.com/angular/angular.js/tree/master/images/logo
+						https://creativecommons.org/licenses/by-sa/3.0/
+					-->
+					<p class="fragment" style="background:#000; opacity:.85; padding: 1em 0">
+						JavaScript framework<br>
+						Front-end separated from back-end<br>
+						Eats JSON
+					</p>
+					<aside class="notes">
+						What is this AngularJS everyone keeps talking about?<br>
+						[next]<br>
+						Back-end can deliver JSON to front-end.<br>
+						AngularJS displays data.<br>
+						As if your front-end is consuming an API!
+					</aside>
+				</section>
+
+				<section>
+					<pre><code data-trim contenteditable>
+@_TOP_@
+<h1 ng-bind="page.title"></h1>
+<p ng-if="items.course">You have a course!</p>
+<button ng-show="items">Buy more</button>
+<button ng-hide="items">Buy now</button>
+@_BOTTOM_@
+					</code></pre>
+					<aside class="notes">
+						After using Angular, now my Legacy App page looked like this.<br>
+						(not showing JavaScript)<br>
+						Now all front-end has from Legacy App is basically "includes" to get header/footer.<br>
+						The rest is HTML code with "ng-" attributes.<br>
+						These are what Angular uses to do things.<br>
+						Cleaner.<br>
+						Still using Legacy back-end, but all it has to do is "routing" to call the right module and deliver JSON (and do authentication).
+					</aside>
+				</section>
+
+				<section>
+					<pre><code data-trim contenteditable>
+&lt;html ng-app="MyApp">
+...
+<script src="angular.min.js"></script>
+<script>
+  angular.module / factory / controller
+  $scope.items = ...;
+</script>
+&lt;/html>
+					</code></pre>
+					<aside class="notes">
+						AngularJS code will handle how the JSON feeds are then displayed in the page.<br>
+						Angular pulls in the JSON and can massage for use by "-ng" attributes, etc.
+						What's the difference? Don't have to use Angular for this...
+						But I like it, because a dump JS dev can use your feeds to do stuff.
+						More of treating your site as an API.
+					</aside>
+				</section>
+
+				<section data-background="stock_art/orange/migration.jpg">
+					<aside class="notes">
+						Migration of entire app to Dancer is now much easier.<br>
+						I gave it a whirl with a handful of routes and modules.<br>
+						It went great.<br>
+					</aside>
+				</section>
+
+				<section>
+					<pre><code data-trim contenteditable>
+package MyApp::Feedback;
+use MyApp;
+my $app = MyApp->new( ... );
+sub list {
+    my $self = shift;
+    my $code = shift
+        or return $app->die('Need code');
+    my $rows = $app->dbh($feedback_table)->...;
+    return $rows;
+}					
+					</code></pre>
+					<aside class="notes">
+						For my modules that were the "App" (not "Web App"), few changes.<br>
+						Original module<br>
+						Using a class to get a custom 'die' and database handle.<br>
+						Not really doing this properly, but it worked (first attempt).
+					</aside>
+				</section>
+
+				<section>
+					<pre><code data-trim contenteditable>
+package MyApp::Feedback;
+use Moo;
+with MyApp::HasDatabase;
+sub list {
+  my $self = shift;
+  my $code = shift
+    or die 'Need code';
+  my $rows = $self->dbh->...;
+  return $rows;
+}					
+					</code></pre>
+					<aside class="notes">
+						I had a custom 'die' which I was using to die and log things.<br>
+						Also was passing a database handle in, but I changed to use a Role.
+					</aside>
+				</section>
+
+				<section>
+					<h2>Before:</h2>
+					<pre><code data-trim contenteditable>
+sub _route_feedback {
+    my $self = shift;
+    my (undef, $sub_action, $code) = split '/', $self->route;
+    $code ||= $sub_action;
+    $self->_set_status('400 Bad Request');   # start with 400
+    my $feedback = MyApp::Feedback->new;
+    for ($sub_action) {
+        when ("list") {
+            my $feedbacks = $feedback->list($code);
+            $self->_set_tmp( to_json($feedbacks) );
+            $self->_set_path('special/json');
+            $self->_set_content_type('application/json; charset=UTF-8');
+            $self->_set_status('200 OK') if $feedbacks;
+        }
+        default {  #...
+					</code></pre>
+					<aside class="notes">
+						Biggest improvement in things that I "stole" from Dancer (naturally).<br>
+						This is my Legacy App's route for displaying and accepting feedback entries.<br>
+						Does not include any authentication checks, nor urldecoding.<br>
+						This handles feeding back an array of entries for an item ('list'), a single entry (GET), and saving an entry (POST).
+					</aside>
+				</section>
+
+				<section>
+					<h2>Before, continued:</h2>
+					<pre><code data-trim contenteditable>
+default {
+    for ($self->method) {
+        when ('GET') {
+            my $row = $feedback->get($code)
+                or return $self->_route_error;
+            $self->_set_tmp( to_json($row) );
+            $self->_set_path('special/json');
+            $self->_set_content_type('application/json; charset=UTF-8');
+            $self->_set_status('200 OK') if $row;
+        }
+        when ('POST') {
+            my $params = $self->body_parameters
+                or return $self->_route_error;
+            $params = from_json($params);
+            my $result = $feedback->save($params);
+            $self->_set_status('200 OK') if $result;
+            $self->_set_path('special/json');
+            $self->_set_content_type('application/json; charset=UTF-8');
+        }
+    }
+					</code></pre>
+					<aside class="notes">
+						Biggest improvement in things that I "stole" from Dancer (naturally).<br>
+						This is my Legacy App's route for displaying and accepting feedback entries.<br>
+						Does not include any authentication checks, nor urldecoding.<br>
+						This handles feeding back an array of entries for an item ('list'), a single entry (GET), and saving an entry (POST).
+					</aside>
+				</section>
+
+				<section>
+					<h2>After:</h2>
+					<pre><code data-trim contenteditable>
+prefix '/feedback' => sub {
+    my $feedback = MyApp::Feedback->new;
+    get '/list/:id' => sub {
+    	return $feedback->list( param 'id' );
+    };
+    get '/:code' => sub {
+        return $feedback->get( param 'code' );
+    };
+    post '' => sub {
+        return $feedback->save( scalar params );
+    };
+};
+					</code></pre>
+					<aside class="notes">
+						Dancer gives me a lot for free.<br>
+						A lot simpler.<br>
+						Still no auth here, but everything else is done (I can use an auth plugin).
+					</aside>
+				</section>
+
+				<section>
+					<h1>TMTOWTDI</h1>
+					<ul class="fragment">
+						<li>Have Dancer deliver HTML files (AngularJS)</li>
+						<li>Or have web server deliver them<ul class="fragment">
+							<li>especially if SPA</li>
+							<li>JSON Web Tokens (JWT)</li>
+						</ul></li>
+					</ul>
+					<aside class="notes">
+						For the front-end, we have options on how to use Dancer:<br>
+					</aside>
+				</section>
+
+				<section>
+					<h1 class="cursive">Now starring Dancer</h1>
+					<aside class="notes">
+						In hindsight, probably should have just moved to Dancer right away.<br>
+						Because Legacy App was a pain:<br>
+						I built my own Routing module in Legacy App...<br>
+						I built my own Auth checking module, akin to Dancer::PAE...<br>
+						Dancer makes it simpler.
+					</aside>
+				</section>
+
+				<section>
+					<h1 class="cursive">Dancer is better<span class="fragment"><i>?</i></span></h1>
+					<aside class="notes">
+						In the process, I learned something...
+					</aside>
+				</section>
+
+				<section data-background="stock_art/urdoingitwrong.jpg" data-background-size="80%">
+					<aside class="notes">
+						I learned you can use tools improperly.<br>
+						You can do Dancer "wrong".<br>
+						You can write tag soup in anything, even the best modern tools.<br>
+						You can stuff logic into TT.<br>
+						You can do AngularJS "wrong".<br>
+						I probably do many things the wrong way.<br>
+						Point is: start somewhere.<br>
+						Maybe you can't write tests in everything, but you can write smart code.
+					</aside>
+				</section>
+
+				<section>
+					<h1>Dancer is better:</h1>
+					<p class="fragment">Routes contain code specific to the Web.</p>
+					<p class="fragment">Routes call non-Dancer modules (business logic).</p>
+					<p class="fragment">Return the data in the appropriate format.</p>
+					<aside class="notes">
+						Dancer is better, when...<br>
+						[next]<br>
+						(thanks to mst for these)<br>
+						Makes it easy to test.<br>
+						Talk to your back-end as if it's an API. Because it is.
+					</aside>
+				</section>
+
+				<section>
+					<h1 class="cursive">Lessons learned</h1>
+					<p class="fragment">Separate concerns</p>
+					<p class="fragment">Keep it testable</p>
+					<p class="fragment">Just start somewhere</p>
+					<aside class="notes">
+						Start: even breaking out micro-services out of a Legacy App to Dancer.
+					</aside>
+				</section>
+
+				<section style="text-align: left;">
+					<h1 class="cursive">The <strike>End</strike> Beginning</h1>
+					<aside class="notes">
+						Comments, questions?
+					</aside>
+				</section>
+
+			</div>
+
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				transition: 'none', // none/fade/slide/convex/concave/zoom
+
+				slideNumber: 'c / t',
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

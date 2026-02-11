@@ -1,0 +1,342 @@
+## _Stranger in a Strange Land:_
+
+# PostgreSQL for<br>MySQL users
+
+Josh Lavin (digory)
+
+[jlavin.endpoint.com/talks/postgres-for-mysql-users](https://jlavin.endpoint.com/talks/postgres-for-mysql-users/)
+
+---
+
+<!-- .slide: data-background="dist/images/End_point_light_on_dark.svg" data-background-size="90%" -->
+
+Note: Josh Lavin. End Point Corp - web consultancy. 7 years since last
+      usage - basic then. Coworkers love it, better figure out why.
+
+---
+
+# History
+
+Note: know thy history
+
+---
+
+## History
+
+### Originally
+
+* MySQL: speed, not [ACID](https://en.wikipedia.org/wiki/ACID)-compliant
+    * MyISAM was fast, but lots of problems
+    * InnoDB only default since 5.5 (2010)
+        * but, legacy tables
+
+* Postgres: ACID-compliant, solid
+    * slower
+
+Note: ACID - Atomicity, Consistency, Isolation, Durability. A =
+      transactions (indivisible). MyISAM = storage engine; had to
+      lock tables.
+
+---
+
+## History
+
+### Today
+
+They are very similar &mdash; but Postgres has some nice things.
+
+Note: Postgres is faster, MySQL has gained many features over time.
+
+---
+
+### Why use PostgreSQL vs MySQL
+### Converting your database
+### Tools & tips
+
+---
+
+# "Post-Gres-Que-Ell"
+
+# or just "Postgres"
+
+Note: how to pronounce.
+
+---
+
+# Why?
+
+---
+
+## Why?
+
+### Not controlled by any company
+
+* .com *vs* .org
+* Product *vs* Project
+
+But, support is still available.
+
+Note: Oracle owns MySQL; distrust.
+
+---
+
+## Why?
+
+### Awesome documentation
+
+<img src="dist/images/pgdocs.png">
+
+Note: versioned. Shows where the feature was introduced.
+
+---
+
+## Why?
+
+### Awesome documentation, 2
+
+* Older MySQL docs are no more
+* Which MySQL docs to use?
+    * MySQL/MariaDB/Percona
+
+Note: MySQL docs for older versions redirect (suddenly) to 5.7. MariaDB
+      docs are on .com, and aren't versioned.
+
+---
+
+## Why?
+
+### Transactional DDL
+
+* Data Definition Language
+* CREATE/ALTER/DROP/etc
+* MySQL can't do it
+
+```sql
+BEGIN;
+CREATE TABLE ...;
+ROLLBACK;
+```
+
+Note: All changes can be tested (and rolled back) before actually
+      applying. MySQL uses transactions from pluggable table system
+      (InnoDB), not core. `psql` default is to automatically commit; so
+      issue `BEGIN;` before making your changes
+
+---
+
+## Why? 
+
+### Data integrity
+
+* type checking
+* February 30
+* mindsets:
+  * MySQL: *app* does checks (db flexible)
+  * Postgres: *database* does checks (db strict)
+* but, MySQL strict mode
+    * but, it can be disabled
+
+Note: Feb 30 is never a valid date. MySQL strict mode can be turned
+      off. Default config in recent versions (it broke our app, so we
+      turned it off).
+
+---
+
+## Why?
+
+### Real tab completion
+
+`select * from demo where [TAB]`
+
+pg shows columns:
+`first_name id last_name`
+
+mysql:
+`Display all 755 possibilities?`
+
+Note: I tried all the Mysql auto-rehash settings, nada.
+
+---
+
+## Why?
+
+### Types
+
+* [`boolean`](https://www.postgresql.org/docs/current/static/datatype-boolean.html)
+    * MySQL is just `TINYINT(1)`, 0=false, !0=true
+
+* [`json`, `jsonb`](https://www.postgresql.org/docs/current/static/datatype-json.html)
+
+```json
+{"pm": "Bend", "handle": "digory"}
+{"pm": "SF", "handle": "timtoady"}
+```
+
+```sql
+SELECT jdoc->'handle' FROM demo;
+ "digory"
+ "timtoady"
+(2 rows)
+```
+
+Note: JSON indexing is in MySQL 5.7, but not in MariaDB latest -- aside:
+      versioning MariaDB vs MySQL...
+
+---
+
+## Why?
+
+### Types
+
+* [Arrays](https://www.postgresql.org/docs/current/static/arrays.html)
+```sql
+CREATE TABLE yapc (
+    venue varchar(64), years integer[]
+);
+INSERT INTO yapc VALUES
+    ( 'Austin', '{2013}' ),
+    ( 'Orlando', '{2014,2016}' )
+;
+SELECT venue FROM yapc WHERE 2014 = ANY (years);
+    Orlando
+SELECT venue, cardinality(years) FROM yapc;
+    Austin     1
+    Orlando    2
+```
+
+---
+
+## Why?
+
+### Others
+
+* [Fulltext](https://www.postgresql.org/docs/current/static/textsearch-intro.html) w/o MyISAM, MySQL 5.6, or Solr/ElasticSearch
+* Partial indexes
+    * `CREATE INDEX ... WHERE deleted != 1`
+* [DBD::Pg](https://metacpan.org/pod/DBD::Pg) & asynchronous queries
+* PL/Perl
+* MySQL gotchas: [sql-info.de/mysql/gotchas.html](http://sql-info.de/mysql/gotchas.html)
+
+Note: Partial indexes, say for all rows where deleted != 1. PL/Perl
+      allows you to write Postgres functions in Perl. Broad topic.
+
+---
+
+## Why?
+
+### Interesting
+
+* 84% of Rails developers prefer Postgres
+    * 1,417 developers surveyed
+    * [rails-hosting.com/2016/#q42](http://rails-hosting.com/2016/#q42)
+* Increased dramatically over the years of the survey
+
+Note: FWIW.
+
+---
+
+# Converting
+
+---
+
+## Converting
+
+1. Convert schema
+    * `mysqldump --compatible=postgresql --no-data`
+    * datatypes a bit different
+        - e.g. tinyint vs int
+    * AUTO_INCREMENT vs SEQUENCE
+2. Convert data
+    * scripts
+3. Convert application
+
+Note: mysqldump is a starting place. Scripts are very useful to massage
+      data, and be able to re-run the conversion.
+
+---
+
+## Converting
+
+* [blog.endpoint.com/2014/11/mysql-to-postgresql-migration-tips.html](http://blog.endpoint.com/2014/11/mysql-to-postgresql-migration-tips.html)
+* Maybe:
+    - [github.com/AnatolyUss/FromMySqlToPostgreSql](https://github.com/AnatolyUss/FromMySqlToPostgreSql)
+    - [ora2pg.darold.net](http://ora2pg.darold.net/)
+    - Also see [Postgres Wiki](https://wiki.postgresql.org/wiki/Converting_from_other_Databases_to_PostgreSQL)
+
+---
+
+# Tools & Tips
+
+---
+
+## Tools & Tips
+
+### Installing
+
+* easy to find guides ([search "install postgresql"](https://duckduckgo.com/?q=install+posgresql))
+* Mac one-click: [postgresapp.com](http://postgresapp.com/)
+
+---
+
+## Tools & Tips
+
+### psql commands
+
+`\<command>`
+
+- `\q` or `CTRL+d` (quit)
+- `\?` (show meta-commands)
+- `\h` (help)
+- `\d` (shows all tables, sequences, indexes)
+- `\dt` (show only tables)
+- `\d <table>` (describes)
+- `\l` (list databases)
+- `\c` (connect to different database)
+
+Note: "psql" is the interactive terminal.
+
+---
+
+## Tools & Tips
+
+### Entering queries
+
+* standard query terminators: `;` or `\g`
+* `\x` for vertical columns (like MySQL's `\G`)
+    - `<sql here> \x\g\x` (turn on, run query, turn off)
+```sql
+> SELECT * FROM demo \x\g\x
+Expanded display is on.
+-[ RECORD 1 ]----------------------------------
+id         | 1
+first_name | Joshua
+last_name  | Lavin
+jdoc       | {"pm": "Bend", "handle": "digory"}
+-[ RECORD 2 ]----------------------------------
+id         | 2
+first_name | Larry
+last_name  | Wall
+jdoc       | {"pm": "SF", "handle": "timtoady"}
+```
+
+---
+
+## Tools & Tips
+
+### psql terminal
+
+* `CTRL-R` reverse search
+
+* history file: `~/.psql_history`
+
+---
+
+# Thank You
+
+Slides, notes:<br>[github.com/jdigory/talk-postgres-for-mysql-users](https://github.com/jdigory/talk-postgres-for-mysql-users)
+
+## Get help
+
+[endpoint.com/services/postgresql](https://www.endpoint.com/services/postgresql)
+
+Note: these are the experts, not me

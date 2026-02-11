@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+
+	<title>Optimize Your Website Performance for Fun &amp; Profit</title>
+
+	<meta name="author" content="Josh Lavin">
+
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<link rel="stylesheet" href="css/reveal.min.css">
+	<link rel="stylesheet" href="css/theme/beige.css" id="theme">
+
+	<!-- For syntax highlighting -->
+	<link rel="stylesheet" href="lib/css/zenburn.css">
+
+	<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+	<script>
+		if( window.location.search.match( /print-pdf/gi ) ) {
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = 'css/print/pdf.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		}
+	</script>
+
+	<!--[if lt IE 9]>
+	<script src="lib/js/html5shiv.js"></script>
+	<![endif]-->
+</head>
+<body>
+
+<div class="reveal">
+<div class="slides">
+
+	<section>
+		<h1 style="text-transform:none">Optimize Your Website Performance for <span style="white-space:nowrap">Fun &amp; Profit</span></h1>
+		<h3>Perl::Dancer Conference &middot; Hancock, NY</h3>
+	</section>
+
+	<section>
+		<h1>Who?</h1>
+		<h2>Josh Lavin &middot; Perusion</h2>
+		<p><a href="http://twitter.com/perusionjosh">@perusionjosh</a></p>
+		<aside class="notes">
+			<p>Working with the web professionally since 2001</p>
+			<p>I care about speed</p>
+		</aside>
+	</section>
+
+	<section>
+		<h1>Why and How</h1>
+		<aside class="notes">
+			<ul>
+				<li>Why speed still matters</li>
+				<li>Techniques to be fast</li>
+			</ul>
+		</aside>
+	</section>
+
+	<section>
+		<h2>Why care about speed?</h2>
+		<p>
+			<q>&ldquo;People have broadband Internet. So what?&rdquo;</q><br>
+			<cite>&mdash;Joe Webmaster</cite></p>
+		<aside class="notes">
+			<li>Resource sizes</li>
+			<li>Comparisons and competition</li>
+			<li>SEO</li>
+			<li>Sales</li>
+		</aside>
+	</section>
+
+	<section>
+		<h3>Why?</h3>
+		<h2>Bigger resources</h2>
+		<ul>
+			<li>jQuery, Bootstrap, JS Frameworks</li>
+			<li>Masthead images, Retina Displays</li>
+		</ul>
+		<aside class="notes">
+			<p>Faster pipes, but bigger resources. All have a weight.</p>
+			<p>Some frameworks are huge. Do you really need all they offer, or can you remove stuff?</p>
+			<p>Some JS files aren't minified (more on that later).</p>
+			<p>Retina Displays mean high-res images. How do those affect mobile users if your mobile strategy is simply "we have a responsive site"?</p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>Why?</h3>
+		<h2>Comparisons</h2>
+		<ul>
+			<li>Phone apps are fast; your site is not</li>
+			<li>Competitors?</li>
+		</ul>
+		<aside class="notes">
+			<p>phone app: Instagram (loads most-oft requested resources in advance of their being requested)</p>
+			<p>Mobile users become accustomed to speediness</p>
+			<p>If two companies offer me the same thing, but one site is slow and the other fast, guess which one I will buy from?</p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>Why?</h3>
+		<h2>SEO</h2>
+		<ul>
+			<li><a href="http://googlewebmastercentral.blogspot.com/2010/04/using-site-speed-in-web-search-ranking.html">Speed &amp; ranking</a></li>
+			<li><a href="http://googleonlinesecurity.blogspot.com/2014/08/https-as-ranking-signal_6.html">HTTPS &amp; ranking</a>
+				<ul>
+					<li><a href="https://istlsfastyet.com/">isTLSfastyet.com</a></li>
+				</ul>
+			</li>
+		</ul>
+		<aside class="notes">
+			<p>Google ranks you higher if your site is faster.</p>
+			<p>Google ranks you higher if your site is delivered securely.</p>
+			<p>HTTPS and Speed are enemies no longer. mod_spdy</p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>Why?</h3>
+		<h2>Sales</h2>
+		<ul>
+			<li>Load time &amp; bounces</li>
+			<li>Load time &amp; conversions</li>
+			<li>Performance bottlenecks
+				<ul>
+					<li>slashdotting / Reddit effect / hug of death</li>
+				</ul>
+			</li>
+		</ul>
+		<aside class="notes">
+			<p>Page load time and bounce rate are correlated.</p>
+			<p>According to surveys by Gomez and Akamai, a 1 second delay in page response can result in a 7% reduction in conversions.</p>
+			<p>If an e-commerce site is making $100,000 per day, a 1 second page delay could potentially cost you $2.5 million in lost sales every year.</p>
+			<p>47% of consumers expect a web page to load in 2 seconds or less.</p>
+			<q cite="https://blog.kissmetrics.com/loading-time/">source</q>
+			<p>Maybe you can prevent your site getting overwhelmed due to sudden popularity</p>
+			<p>If your site is slow, users will tell their friends. Same source: 44% of online shoppers will tell their friends about a bad experience online.</p>
+		</aside>
+	</section>
+
+<!-- #how -->
+
+	<section>
+		<h2>How to be fast</h2>
+	</section>
+
+	<section>
+		<h3>How</h3>
+		<h2>Image Optimization</h2>
+		<ul>
+			<li>Lossless compression
+				<ul>
+					<li><a href="http://freecode.com/projects/jpegoptim">jpegoptim</a></li>
+					<li><a href="http://optipng.sourceforge.net/">optipng</a></li>
+				</ul>
+			</li>
+			<li>
+				<a href="http://css-tricks.com/css-sprites/">CSS sprites</a>
+				<br><img src="img/1454282699-lhn-sprite.png">
+			</li>
+		</ul>
+		<aside class="notes">
+			<p>Strip unnecessary EXIF data. Regularly run these tools on the images that your users upload.</p>
+			<p>Sprites can combine resources so you can get all the images with just one request. You control what part of the image to display using CSS (background-position).</p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>How</h3>
+		<h2>Minify &amp; Concatenate</h2>
+		<ul>
+			<li><a href="http://gruntjs.com/">GruntJS</a></li>
+			<li>Google's <a href="https://developers.google.com/speed/pagespeed/module">mod_pagespeed</a></li>
+			<li>Google's <a href="http://closure-compiler.appspot.com/">Closure Compiler Service</a></li>
+			<li><a href="https://github.com/perusion/interchange-extras/blob/master/speed/i/usertag/js_minify.tag">js_minify</a> UserTag for IC 5</li>
+		</ul>
+		<aside class="notes">
+			<ul>
+				<li>Strip spaces, comments</li>
+				<li>Use shorter variable names</li>
+				<li>One CSS, one JS file to download, instead of many</li>
+			</ul>
+			<p>Example: client whose branding firm released a website template with 7 CSS files and 6 JS files. Only jQuery and a jQuery plugin were minified.</p>
+			<p>GruntJS is a Javascript task runner; runs on NodeJS. You can install various prebuilt tasks. Use standalone or as part of your deployment.</p>
+			<p>js-minify runs the JS body through Closure Compiler. Best to use within a timed-build tag in production</p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>How</h3>
+		<h2>CDN<span style="text-transform:lowercase">s</span></h2>
+		<ul>
+			<li>Static files</li>
+			<li>HTTPS gotchas</li>
+			<li><a href="http://www.websiteoptimization.com/speed/tweak/parallel/">Multiple hostnames</a>
+				<ul>
+					<li>
+						Consistency (<a href="https://github.com/perusion/interchange-extras/blob/master/speed/i/filter/simg.filter">example</a>)
+					</li>
+				</ul>
+			</li>
+			<li>"I updated an image, so I wiped the cache"</li>
+		</ul>
+		<aside class="notes">
+			<p>Content Delivery Network</p>
+			<p>Limits to domain sharding (DNS lookups). Typically no more than 3 shards.</p>
+			<p>MaxCDN, Amazon CloudFront</p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>How</h3>
+		<h2>CDN<span style="text-transform:lowercase">s</span> for 3rd-party resources</h2>
+		<ul>
+			<li>jQuery &amp; others</li>
+			<li>Outages, security</li>
+			<li><a href="http://www.jsdelivr.com/">jsDelivr</a></li>
+		</ul>
+		<aside class="notes">
+			<p>Users may already have JS cached if another site uses same one</p>
+			<p>Google Hosted Libaries will deliver latest version with a general version number (e.g. "2" instead of "2.1.1"), but the first one will have a very short cache, while latter will have a year-long cache.</p>
+			<p>Test it: some CDNs don't follow best practices for caching... also, extra DNS lookup</p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>How</h3>
+		<h2>Apache/nginx Best Practices</h2>
+		<p><a href="https://github.com/h5bp/">HTML5 Boilerplate server-configs</a></p>
+		<ul>
+			<li>MIME types, compression, expires</li>
+			<li>Cache busting:
+				<ul>
+					<li>Not: <code>foo.css?1234</code>, but: <code>foo.2.css</code> (file on disk is <code>foo.css</code>)</li>
+				</ul>
+			</li>
+		</ul>
+		<aside class="notes">
+			<p>Far-future expiry on static resources (locally-hosted only)</p>
+			<p></p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>How</h3>
+		<h2>A word on Responsive Design</h2>
+		<p>Probably not good enough.</p>
+		<aside class="notes">
+			<p>Delivers full-size images to mobile, even though may be shrunk        or even hidden from view</p>
+			<p>Requires downloading of full CSS, even if only a handful of          "media queries" apply to current device</p>
+			<p>Keynote says for a fast-performing site you should limit mobile web pages to only 10 elements weighing 100 KB when on 3G connections (www.keynote.com)</p>
+			<p>Responsive images: upcoming &lt;picture&gt; element may offer smaller pictures for various devices. Nothing to say, because not supported yet. In Chrome's current beta, nothing else.</p>
+			<p>But might be faster than jQuery Mobile!</p>
+    	</aside>
+	</section>
+
+	<section>
+		<h3>How</h3>
+		<h2>3rd Party Widgets</h2>
+		<ul>
+			<li>Facebook, Twitter, ads, etc</li>
+			<li><a href="http://blog.patrickmeenan.com/2011/10/testing-for-frontend-spof.html">Single Point of Failure?</a></li>
+			<li>Is it worth it?</li>
+		</ul>
+		<aside class="notes">
+			<p>Provided script async JS?</p>
+			<p>Even so, does it affect perceived speed?</p>
+			<p>Do they set expiry for their assets?</p>
+			<p>Test for SPOF (webpagetest.org blackhole server)</p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>How</h3>
+		<h2>Other</h2>
+		<ul>
+			<li>Cache bits of code</li>
+			<li>Call 3rd-party services on server, not client</li>
+		</ul>
+		<aside class="notes">
+			<p>[timed-build] for IC 5</p>
+			<p>End Point's full-page caching contribution to IC 5</p>
+			<p>3rd party: Mandrill, Mailchimp subscribe on receipt (queue options)</p>
+		</aside>
+	</section>
+
+	<section>
+		<h1>Resources</h1>
+		<ul>
+			<li><a href="https://developers.google.com/speed/">developers.google.com/speed</a></li>
+			<li><a href="http://www.stevesouders.com/">www.stevesouders.com</a></li>
+			<li><a href="http://www.webpagetest.org/">www.webpagetest.org</a></li>
+			<li>Chrome's developer tools (network waterfall)</li>
+	</section>
+
+	<section>
+		<h1>Questions?</h1>
+		<h2 class="fragment">Thank You</h2>
+	</section>
+
+</div><!-- /.slides -->
+</div><!-- /.reveal -->
+
+<script src="lib/js/head.min.js"></script>
+<script src="js/reveal.min.js"></script>
+
+<script>
+
+	// Full list of configuration options available here:
+	// https://github.com/hakimel/reveal.js#configuration
+	Reveal.initialize({
+		controls: true,
+		progress: true,
+		history: true,
+		center: true,
+
+		theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+		transition: Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+		// Optional libraries used to extend on reveal.js
+		dependencies: [
+			{ src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+			{ src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+		]
+	});
+
+</script>
+
+</body>
+</html>

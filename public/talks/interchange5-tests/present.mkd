@@ -1,0 +1,107 @@
+# Writing unit tests for a Legacy App
+
+## (Interchange 5)
+
+---
+
+## Classes & Methods FTW
+
+```
+package Vend::MyModule;
+use Vend::Interpolate;
+sub session_value {
+    my ($self, $sid, $key) = @_;
+    my $fn = Vend::File::get_filename($sid,2,1,'session');
+    ...
+}
+```
+
+---
+
+## Fail: can't use modules with Legacy App functions from the CMD line
+
+---
+
+## Enter: External.pm
+
+Never used, but was to allow Interchange to be called from external apps, to give them some limited info (variables & config). 
+
+---
+
+## Legacy App's Legacy Module FTW
+
+interchange.cfg & catalog.cfg:
+`External yes`
+
+---
+
+## Thus begins insanity
+
+```
+#!/bin/env perl
+
+use strict;
+use warnings;
+use lib 'lib';
+
+# change these:
+my $uid = 123;
+my $gid = 123;
+my $catname = 'my_catalog';
+
+# set path to IC server as an environment variable:
+#    EXT_INTERCHANGE_DIR=/path/to/interchange/server
+#
+$ENV{EXT_INTERCHANGE_CATALOG} ||= $catname;
+```
+---
+
+## keep going
+
+```
+# chuser if root
+use POSIX qw(setuid setgid);
+my $user = $ENV{LOGNAME} || $ENV{USER} || getpwuid($<);
+if ($user eq 'root') {
+    setuid($uid);
+    setgid($gid);
+}
+
+use Vend::External;
+session();
+chdir $Vend::Cfg->{VendRoot}
+    or die "Unable to chdir $Vend::Cfg->{VendRoot}: $!\n";
+```
+
+---
+
+## now the tests
+
+```
+use Test::More tests => 2;
+
+use Vend::MyModule;
+my $m = Vend::MyModule->new();
+
+ok( defined $m && ref $m eq 'Vend::MyModule', 'new() works' );
+is( $m->session_value('abc123','fname'), 'Josh', 'has first name' );
+```
+
+---
+
+## Run 'em
+
+```
+$ prove t/mymodule.t
+t/mymodule.t .. ok
+All tests successful.
+Files=1, Tests=2, 2 wallclock secs
+Result: PASS
+
+```
+
+---
+
+## GitHub: jdigory / interchange-extras / modern
+
+### http://git.io/vWsgB
