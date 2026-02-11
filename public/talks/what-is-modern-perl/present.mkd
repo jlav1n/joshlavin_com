@@ -1,0 +1,825 @@
+# What is Modern Perl?
+
+## Josh Lavin (DIGORY)
+
+### The Perl Conference 2017<br>Washington, DC
+
+[jlavin.endpoint.com/talks/what-is-modern-perl](https://jlavin.endpoint.com/talks/what-is-modern-perl/)
+
+---
+
+<!-- .slide: data-background="dist/images/End_point_dark_on_light.svg" data-background-size="90%" -->
+
+Note: Josh Lavin. End Point Corp - web consultancy. Been using Perl for
+      15 years, but only in what I would call a "modern" way for the
+      last 3 years. I still have a lot to learn.
+
+---
+
+## Definition
+## Quotes
+## Mindsets &amp; Toolsets
+
+---
+
+<!-- .slide: data-background="dist/images/andrew-collins-178963.jpg" -->
+<!-- photo by https://unsplash.com/@andrewcollins -->
+
+# How is &ldquo;Modern Perl&rdquo; defined?
+
+Note: or can it be? (What follows is my opinion)
+
+---
+
+# `use strict;`
+# `use warnings;`
+# _?_
+
+Note: good ideas, but no
+
+---
+
+# `use Modern::Perl;`
+# _?_
+
+Note: if you want to, but only a start. (Tell what this does)
+
+---
+
+<!-- .slide: data-background="dist/images/twitter-modern-perl-teethteaparty.png" data-background-size="79%" -->
+
+Note: https://twitter.com/CarolynLowman72/status/798216949440409600
+
+---
+
+<!-- .slide: data-background="dist/images/twitter-modern-perl-sriedel.png" data-background-size="50%" -->
+
+Note: from the creator of Catalyst & Mojolicious
+
+---
+
+# An oxymoron?
+
+Note: Perl can be used beyond small, one-file scripts.
+
+---
+
+# Perl 6
+# _?_
+
+Note: maybe, but this talk is about Perl 5, because that is what I know.
+
+---
+
+<!-- .slide: data-background="dist/images/modern-perl-book-2002.jpg" data-background-size="40%" -->
+
+Note: the original "Modern Perl" book, circa 2002. I haven't read this,
+      but probably outdated.
+
+---
+
+<!-- .slide: data-background="dist/images/modern-perl-chromatic-2015.jpg" data-background-size="45%" -->
+
+Note: First published 2010, updated in 2015. A great resource. Available
+      for free online, link at end of the presentation. I briefly touch
+      on some subjects covered by this book, but for more in-depth, I
+      highly recommend checking out the book.
+
+---
+
+# &ldquo;Modern Perl is a mindset.&rdquo;
+
+<cite>&mdash; _Modern Perl_, chromatic</cite>
+
+Note: "It's an approach to writing great software with the Perl
+      programming language."
+
+---
+
+<!-- .slide: data-background="dist/images/dana-marin-152965.jpg" -->
+<!-- photo by https://unsplash.com/@amsterdamian -->
+
+# Some quotes
+
+Note: I asked some folks in the Perl community how they would succinctly
+      define "modern Perl".
+
+---
+
+## &ldquo;Modern Perl is code that achieves its goal cleanly, without using old practices that tend to cause more problems than they solve &hellip;
+
+Note: Chad Granum, author of Test2
+
+---
+
+## &ldquo;&hellip;Truly modern Perl code avoids the obviously-bad practices of the past, because history has shaped it.&rdquo;
+
+<cite>&mdash; Chad Granum (EXODIST)</cite>
+
+---
+
+## &ldquo;Writing Modern Perl means spending less time, less angst, and less effort in writing code that is correct, accurate, and easy to work and collaborate on.&rdquo;
+
+<cite>&mdash; Sawyer X (XSAWYERX)</cite>
+
+---
+
+## &ldquo;Modern Perl is using the features that come in recent versions of Perl and keeping up to date with the best of CPAN as it evolves.&rdquo;
+
+<cite>&mdash; Dave Rolsky (DROLSKY)</cite>
+
+---
+
+<!-- .slide: data-background="dist/images/alex-hockett-42938.jpg" -->
+<!-- photo by https://unsplash.com/@ahock -->
+
+# Why does it matter?
+
+Note: Modern Perl is how we can apply modern software development practices to Perl.
+
+---
+
+## &ldquo;It&rsquo;s how effective Perl programmers write powerful, maintainable, scalable, concise, and excellent code.&rdquo;
+
+<cite>&mdash; _Modern Perl_, chromatic</cite>
+
+---
+
+## &ldquo;&hellip;using the newer tools will make a programmer more productive and a program easier to maintain.&rdquo;
+
+<cite>&mdash; Dave Cross<br>[josetteorama.com/what-is-modern-perl](http://www.josetteorama.com/what-is-modern-perl/)</cite>
+
+Note: who doesn't want that?
+
+---
+
+<!-- .slide: data-background="dist/images/mike-kenneally-2236.jpg" -->
+<!-- photo by https://unsplash.com/@asthetik -->
+
+# Mindsets &amp; Toolsets
+
+---
+
+# YMMV
+
+Note: if on older version of Perl, not all applicable, but
+      principles apply.
+
+---
+
+# Clean, maintainable code
+
+Note: Balancing act of getting the job done _now_ vs doing the job _right_
+
+---
+
+## easy to understand &amp; modify
+
+---
+
+<!-- .slide: data-background="dist/images/psychopath.png" data-background-size="60%" -->
+
+Note: You in 3 months.
+      https://stackoverflow.com/questions/876089/who-wrote-this-programing-saying-always-code-as-if-the-guy-who-ends-up-maintai
+
+---
+
+## not this
+
+<pre><code class="hljs perl">
+my $price = (
+    grep { defined } (
+        $sale_price, $our_price, $discount * $msrp
+    )
+) [0];
+</code></pre>
+
+Note: real example, line breaks mine. $price is getting array element
+      perhaps? Not really sure.
+
+---
+
+# Documentation
+
+Note: varying schools of thought: docs could get outdated, "code is my
+      documentation", etc.
+
+---
+
+## communicate your thoughts to yourself
+
+[zachholman.com/posts/documentation](https://zachholman.com/posts/documentation/)
+
+---
+
+## Docs for users in POD
+public methods
+
+## Docs for maintainers in comments
+private methods
+
+Note: I like to document each method in POD as I go, rather than
+      at the end.
+
+---
+
+## public:
+
+```
+=item base_image_url
+
+The basic URL for an image, not signed.
+
+Requires asset_id.
+
+Extra parameters in hashref: size, bleed, type
+
+=cut
+
+sub base_image_url {
+    my ($asset_id, $opt) = @_;
+    ...
+}
+```
+
+---
+
+## private:
+
+```
+sub _nonce {
+    # Uses microseconds like PHP's microtime(true)
+    return sprintf ('%.6f', time);
+}
+```
+
+---
+
+# Modular code
+
+Note: vs one big file or script
+
+---
+
+## Perl modules
+
+* logical separation
+* API boundary
+* code reuse
+
+Note: Organize the code. What should be accessible by callers, and what
+      is private? Small subs.
+
+---
+
+# Coding standards
+
+Note: guidelines for how your programmers in your organization should
+      structure their code
+
+---
+
+<!-- .slide: data-background="dist/images/pbp.jpg" data-background-size="45%" -->
+
+Note: these are just guidelines from Damian -- customize to your liking.
+      A lot of great ideas. Also has a video series on _Modern Perl Best
+      Practices_, which re-evaluates the advice in PBP.
+
+---
+
+# `/x` regex modifier
+
+ignores whitespace
+
+Note: One recommendation from PBP, also Exodist: "For example, `/x` on a
+      regex to split logical parts of the regex on independent lines."
+      Easier to understand the regex.
+
+---
+
+## example
+
+<pre><code class="hljs perl">
+$string =~ /\A[A-Z0-9](?:[-A-Z0-9]*[A-Z0-9])?\z/i;
+
+$string =~ /\A
+  [A-Z0-9]          # must start with an alnum
+  (?:
+    [-A-Z0-9]*      # then maybe a dash or alnum
+    [A-Z0-9]        # finally ending with an alnum
+  )?                # lather, rinse, repeat
+\z/ix;
+</code></pre>
+
+Note: from Email::Valid `_is_domain_label()`.
+
+---
+
+# `Perl::Critic`
+
+Note: Can critique your code. Most policies are based on PBP. Can be
+      very insightful. (a "linter" -- can be configured)
+
+---
+
+```
+print "test";
+```
+
+<pre>
+
+Code before strictures are enabled at line 1, column 1.
+   See page 429 of PBP. (Severity: 5)
+Code before warnings are enabled at line 1, column 1.
+   See page 431 of PBP. (Severity: 5)
+Useless interpolation of literal string at line 1, column 7.
+   See page 51 of PBP. (Severity: 5)
+</pre>
+
+Note: you can customize these, if your organization doesn't care for
+      some. Can be difficult if running on existing code.
+
+---
+
+```
+use strict;
+use warnings;
+print 'test';
+```
+
+<pre>
+
+source OK
+</pre>
+
+Note: Consider running at source code check-in.
+
+---
+
+# Aside: Git
+
+and other revision control systems
+
+Note: tracks changes to files. like in-place backup; almost a requisite
+      when collaborating; etc
+
+---
+
+# Pick one, and use it
+
+Note: Git is popular
+
+---
+
+# `Perl::Tidy`
+
+`perltidy -pbp`
+
+Note: tidies up your code. Diffuses arguments.
+
+---
+
+<pre><code style="width:50%; float:left">
+my $state = {
+    virginia => 'VA',
+    florida => 'FL',
+    utah => 'UT',
+};
+
+if($foo eq 'bar'){
+    print 'foo is bar';
+} else {
+    print 'nope';
+}
+</code></pre>
+
+<pre class="fragment"><code>
+my $state = {
+    virginia => 'VA',
+    florida  => 'FL',
+    utah     => 'UT',
+};
+
+if ( $foo eq 'bar' ) {
+    print 'foo is bar';
+}
+else {
+    print 'nope';
+}
+</code></pre>
+
+---
+
+# Use the CPAN
+
+Note: Comprehensive Perl Archive Network. Where Perl modules are shared.
+      Avail yourself of the experience of others.
+
+---
+
+<!-- .slide: data-background="dist/images/metacpan-logo@2x.png" data-background-size="75%" -->
+
+Note: MetaCPAN has a lot cleaner interface, links to other services,
+      like GitHub. All the cool kids are using it.
+
+---
+
+<!-- .slide: data-background="dist/images/DuckDuckGo_Homepage.png" data-background-size="95%" -->
+
+---
+
+# `!cpan Module`
+
+Note: DuckDuckGo "bang" command
+
+---
+
+# `App::cpanminus`
+
+https://cpanmin.us
+
+`cpanm Module`
+
+Note: Much less output than `cpan` command.
+
+---
+
+# Object Oriented Programming
+
+Note: for large systems, or when you know the code will become large.
+      Plenty of info online (& controversy)
+
+---
+
+## Old-school objects
+
+<pre><code class="hljs perl">
+package Foo;
+use strict;
+use warnings;
+
+sub new {
+    my $class = shift;
+    my $opt = shift || {};
+    $opt->{ic_present} = $Vend::Cfg->{Database};
+    my $self = { %$opt };
+    return bless $self, $class;
+}
+</code></pre>
+
+Note: the constructor for the class. Basic attribute there. This is
+      not wrong -- it may be what you need in your situation.
+
+---
+
+<!-- .slide: data-background="dist/images/thomas-lefebvre-1518.jpg" -->
+<!-- photo by https://unsplash.com/@imthebear -->
+
+Note: Moose/Moo are "object systems". They make Perl 5 OOP easier,
+      more consistent, and less tedious. Moo provides almost
+      two-thirds of Moose (faster).
+
+---
+
+## `Moo(se)?` objects
+
+<pre><code class="hljs perl">
+package Foo;
+use Moo;
+
+has ic_present => (
+    is => 'ro',
+    default => sub { $Vend::Cfg->{Database} },
+);
+</code></pre>
+
+Note: strict and warnings for free. "new" constructor for free. There's
+      our attribute. Moo/Moose best for larger programs. (note about auto-
+      vivification)
+
+---
+
+# Modern Frameworks
+
+Note: not CGI.pm (no longer a core module)
+
+---
+
+# Catalyst
+# Dancer
+# Mojolicious
+
+Note: all different. All build on Plack (which effectively replaces CGI
+      and allows Perl-based web apps to talk to web servers).
+
+---
+
+# Model
+# View
+# Controller
+
+Note: these can help segregate your code into the "MVC model." This is a
+      way to separate areas of concern -- which part of the code is
+      responsible for extracting data from the database & where the
+      logic lives (model), vs the output of that data (view), vs
+      accepting input and commands (controllers). But even "modern
+      frameworks" such as Dancer and Catalyst are not perfect -- you can
+      put all your logic in a "route", for instance.
+
+---
+
+## modern, but not
+
+```
+use Dancer2;
+
+get '/mailchimp/*/**' => sub {
+    my ($method, $opt) = splat;
+    ...
+    # lotsa inline code
+    ...
+    return $something;
+};
+```
+
+Note: you could build an entire page to interact with MailChimp (email
+      newsletter service), all within a Dancer route, or a few routes.
+      While this could work, it isn't very easy to maintain, nor can
+      you really test it, aside from pointing and clicking. Which
+      brings us to...
+
+---
+
+<!-- .slide: data-background="dist/images/nordwood-themes-166423.jpg" -->
+<!-- photo by https://unsplash.com/@nordwood -->
+
+# Testing
+# <br>
+# <br>
+
+Note: We all "test" our work, in one way or another. A modern programmer
+      will prefer automated methods of testing.
+
+---
+
+# Unit
+# Integration
+# System
+# etc.
+
+Note: various kinds: unit, system, etc. Unit is usually the smallest
+      part of code you can test, such as the method in a class. System
+      is the whole system, which is usually something we do, whether we
+      call it that or not.
+
+---
+
+# WFM
+
+Note: I usually check to make sure my code works, before handing it over
+      to a client for review. So I've at least done that much. But never
+      did unit testing until about 3 years ago. Heard talks on unit
+      testing, Test Driven Development, thought, "I should do that."
+
+---
+
+## oh, I tested it alright
+
+```
+UserTag mailchimp Routine <<EOR
+sub {
+    my ($thing1, $thing2, $opt) = @_;
+    ...
+    # lotsa inline code
+    ...
+    return $something;
+}
+EOR
+```
+
+Note: The application I work with (Interchange); you call custom code
+      with a plugin called a UserTag. Basically, the code here in this
+      sub could be similar to code in a Dancer route. The app would call
+      this when you called the usertag in your template code. But you
+      can't unit-test this -- much like if you stuff all your logic in a
+      Dancer route, you can't unit-test that either.
+
+---
+
+## now we're talking
+
+```
+UserTag mailchimp Routine <<EOR
+use Ext::MailChimp3;
+sub {
+    my ($method, $opt) = @_;
+    my $mc = Ext::MailChimp3->new( ... );
+    return $mc->do( $method, $opt );
+}
+EOR
+```
+
+Note: so in this form, I move my Perl code to a real Perl module. Now I
+      can test the methods in Ext::MailChimp3.
+
+---
+
+## we can test this:
+
+<pre><code class="hljs perl">
+package Ext::MailChimp3;
+use Moo;
+
+sub do {
+    my ($self, $method, $opt) = @_;
+    ...
+}
+sub _whatever {
+    ...
+}
+</code></pre>
+
+---
+
+# Testing tools
+
+---
+
+## `Test::More`
+## <span class="fragment">`Test2::Bundle::Extended`</span>
+
+---
+
+<pre><code class="hljs perl" data-noescape>
+use Test::More;
+use_ok('Vend::API::User');
+is(
+    Vend::API::User::fetch(),
+    undef,
+    'no user'
+);
+done_testing();
+
+<span class="fragment">$ prove -l t/vend/api/user.t
+t/vend/api/user.t .. ok
+All tests successful.</span>
+</code></pre>
+
+Note: what it looks like. "is" keyword, but others. Thing to do,
+      expected output, name of test. Different levels -- test inputs,
+      test absence of inputs. You can get more detailed as you go, catch
+      more things.
+
+---
+
+# existing code
+
+test, refactor, test
+
+Note: Tasked with adding or changing functionality. But you may need to
+      refactor someone's previous work (or your own). You don't want to
+      break existing functionality. So you can write a simple system
+      test, does this subroutine return the output I expect, right now?
+      Then refactor, test. Add your changes, test.
+
+---
+
+<pre><code class="hljs perl">
+use Test::More;
+use_ok('Existing::Module');
+
+is(
+    Existing::Module::sumthin( ... ),
+    $expected,
+    'existing func check'
+);
+</code></pre>
+
+---
+
+# TDD
+
+Note: Test Driven Development. Some folks use this. Write the test first
+      (it fails). Then write the code until the test passes. Can help
+      you flesh out the design of the program, before starting. "Am I
+      sanely doing things?"
+
+---
+
+## analysis paralysis
+
+just start somewhere
+
+Note: You don't have to figure it all out, to just get started.
+
+---
+
+# `DBIx::Class`
+
+Note: (or "DBIC"). Over regular DBI. What if our database access could
+      be done as an object?
+
+---
+
+<pre><code class="hljs perl">
+use Dancer2;
+use Dancer2::Plugin::Database;
+
+get '/' => sub {
+    my $sth = database->prepare(q{
+        SELECT * FROM content WHERE code = 'index'
+    });
+    $sth->execute;
+    my $content = $sth->fetchrow_hashref;
+    return $content->{page_text};
+};
+</code></pre>
+
+Note: I'm very much a DBIC beginner, but I experimented with taking an
+      existing app, and refactoring to use DBIC.
+
+---
+
+<pre><code class="hljs perl">
+use Dancer2;
+use Dancer2::Plugin::DBIC;
+
+get '/' => sub {
+    my $content = rset('Content')->find('index');
+    return $content->page_text;
+};
+</code></pre>
+
+Note: with DBIC. The "rset" keyword is the ResultSet, keyword provided
+      by the plugin. DBIC makes our queries generally applicable to
+      various databases. It's not often that you will switch dbs, but
+      you may know MySQL, and be tasked with working on an app using
+      Postgres. If you don't know the differences, you have to learn
+      them. But if the app used DBIC, it makes it easier, in that sense.
+      Maybe your devs don't even have to know SQL at this point...
+
+---
+
+<pre><code class="hljs perl">
+package ChemJobs::Schema::ResultSet::Job;
+use base 'DBIx::Class::ResultSet';
+
+sub salary_less_than {
+    my ($self, $salary) = @_;
+    return $self->find({
+        salary => { '<' => $salary }
+    });
+}
+</code></pre>
+
+Note: DBIC gives us additional tooling -- we can add this method to
+      extend the ResultSet, then our code can use
+      `salary_less_than()`. You have to be careful with DBIC if you
+      get to using advanced queries. You may want to debug so you know
+      what it's doing behind the scenes. It's a tool; wield carefully.
+      Many more resources out there.
+
+---
+
+<!-- .slide: data-background="dist/images/montylov-216756.jpg" -->
+<!-- photo by https://unsplash.com/@montylov -->
+
+# Summary
+# <br>
+
+---
+
+## mindset, approach
+## write great software
+## new features, practices
+
+Note: I think these aspects of Modern Perl are especially important when
+      interacting with others. The larger your team, then the more you
+      want to take advantage of ways to increase colloboration -- to
+      make it easier to get work done, where you don't have to go back
+      and refactor code in 6 months. "Code is not for the computer, but
+      the human."
+
+---
+
+# Questions?
+
+---
+
+## Slides: [git.io/vHHOE](https://github.com/jdigory/talk-what-is-modern-perl)
+
+[modernperlbooks.com/books/modern_perl_2016](http://www.modernperlbooks.com/books/modern_perl_2016/)
+
+[speakerdeck.com/genehack/modern-perl-for-the-unfrozen-paleolithic-perl-programmer-1](https://speakerdeck.com/genehack/modern-perl-for-the-unfrozen-paleolithic-perl-programmer-1)
+
+[engineering.semantics3.com/2016/06/15/a-perl-toolchain-for-building-micro-services-at-scale](https://engineering.semantics3.com/2016/06/15/a-perl-toolchain-for-building-micro-services-at-scale/)
+
+---
+
+## Slides: [git.io/vHHOE](https://github.com/jdigory/talk-what-is-modern-perl)
+
+[speakerdeck.com/miccheng/modern-software-development-practices](https://speakerdeck.com/miccheng/modern-software-development-practices)
+
+Modern PBP Video series: [shop.oreilly.com/product/110000790.do](http://shop.oreilly.com/product/110000790.do)
+
+[slideshare.net/RandalSchwartz/perl-best-practices-v4](https://www.slideshare.net/RandalSchwartz/perl-best-practices-v4)
